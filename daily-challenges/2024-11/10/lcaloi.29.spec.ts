@@ -1,4 +1,3 @@
-import { test } from "@playwright/test";
 interface StepsAnalysis {
     totalSteps: number;        // Tổng số bước trong tuần
     averageSteps: number;      // Trung bình mỗi ngày
@@ -8,32 +7,26 @@ interface StepsAnalysis {
     streak: number;            // Số ngày liên tiếp đạt mục tiêu
 }
 
-test('solution 10/11/2024', async () => {
-    console.log(analyzeSteps([15000, 6000, 10000, 5500, 4000, 3000, 2000]));
-    console.log(analyzeSteps([10000, 10000, 1000, 10000, 10000, 10000, 10000]));
-})
-
 function analyzeSteps(dailySteps: number[], target: number = 10000): StepsAnalysis {
-    const totalSteps: number = dailySteps.reduce((total, curValue) => (total + curValue), 0);
-    const averageSteps: number = ~~(totalSteps / dailySteps.length);
+
+    const totalSteps: number = dailySteps.reduce((total, curValue) => total + curValue, 0);
+    const averageSteps: number = Math.floor(totalSteps / dailySteps.length);
     const bestDay: number = Math.max(...dailySteps);
     const worstDay: number = Math.min(...dailySteps);
-    const daysAboveTarget: number = dailySteps.filter((item) => {
-        return item >= target;
-    }).length;
+    const daysAboveTarget: number = dailySteps.filter((item) => item >= target).length;
+    let streak: number = 0;
+    let currentCount = 0;
+    dailySteps.forEach((item) => {
+        if (item >= target) {
+            currentCount++;
+        } else {
+            currentCount = 0;
+        }
 
-    const streak: number = ((input: number[]) => {
-        let maxCount: number = 0;
-        let currentCount: number = 0;
-        input.forEach(item => {
-            currentCount = (item >= target) ? (currentCount + 1) : 0;
-            if (currentCount > maxCount) {
-                maxCount = currentCount;
-            }
-        });
-        return maxCount;
-    })(dailySteps);
-
+        if (currentCount > streak) {
+            streak = currentCount;
+        }
+    });
 
     return {
         totalSteps,
@@ -42,5 +35,10 @@ function analyzeSteps(dailySteps: number[], target: number = 10000): StepsAnalys
         worstDay,
         daysAboveTarget,
         streak
-    }
+    };
 }
+
+console.log(analyzeSteps([12000, 11000, 9000, 8000, 10500, 7000, 11500]));
+console.log(analyzeSteps([5000, 6000, 7000, 5500, 4000, 3000, 2000]));
+console.log(analyzeSteps([10000, 10000, 10000, 10000, 10000, 10000, 10000]));
+

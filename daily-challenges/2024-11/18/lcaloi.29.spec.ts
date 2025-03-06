@@ -12,7 +12,6 @@ test.describe('solution 18/11/24', () => {
         for (let i = 0; i < 3; i++) {
             await page.locator(`span.delete-list`).nth(0).click();
         }
-        await page.close();
     });
 
     test('Thêm công việc', async ({ page }) => {

@@ -1,26 +1,29 @@
-import { expect, Locator, test } from '@playwright/test';
+// navigate vào trang ruy cập trang: https://material.playwrightvn.com/
+//click vào bài 3: tìm vì tinh tú
+//a[@href='games/003-vi-tinh-tu.html']
+// Lấy tên loại sao cần tìm : span#target-name
+// dựa vào target name để chọn đúng vì tinh tú:
+// //span[@class='constellation-name' and  text()='${targetName}']
 
-test('solution for day 27/11/24', async ({ page }) => {
+
+import { test, expect } from '@playwright/test';
+
+test('Solution for day 27/11/24', async ({ page }) => {
     await page.goto('https://material.playwrightvn.com/');
-    await expect(page.getByText('Tài liệu học automation test')).toBeVisible();
-    await page.click(`a[href='games/003-vi-tinh-tu.html']`);
-    let targetName = '';
-    let loopCount = 0;
-    do {
-        const text = await page.locator(`span#target-name`).textContent();
-        if (text) {
-            targetName = text;
+    await page.click(`//a[@href='games/003-vi-tinh-tu.html']`);
+    let targetName;
+    while (true) {
+        targetName = await page.locator('span#target-name').textContent();
+        if (targetName) {
             break;
         }
-        else if (loopCount >= 3) {
-            throw new Error(`ERROR: get target name failed!!! `);
-        }
-        loopCount++;
-    } while (!targetName);
-    const mysteryBoxTarget: Locator = page.locator(`//*[@class='constellation-name' and text()='${targetName}']`);
-    page.on('dialog', async dialog => {
+    }
+
+    page.on('dialog', dialog => {
         expect(dialog.message()).toEqual('Chúc mừng! Bạn đã tìm được vì tinh tú đúng!')
-        await dialog.accept();
-    });
-    await mysteryBoxTarget.click();
+        dialog.accept();
+    })
+
+    await page.click(`//span[@class='constellation-name' and  text()='${targetName}']`);
+
 })
